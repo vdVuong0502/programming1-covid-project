@@ -22,6 +22,10 @@ public class covidAnalyse {
     }
 
     static String textHandle(String text) {
+        /*
+         * This method is used incase the user input Scanner read \n character.
+         * Basically, it's is used for easier comparison statements.
+         */
         text = text.replace("\n", "").replace("\r", "");
         text = text.toLowerCase();
         return text;
@@ -37,7 +41,6 @@ class Data {
     ArrayList<Integer> peopleVacinated = new ArrayList<Integer>();
 
     public static void createDataObject() throws IOException {
-        // variable to check if exist.
         // Create an empty object
         Data processedData = new Data();
         // Select area
@@ -66,6 +69,10 @@ class Data {
     }
 
     static boolean findContinent(String continent) throws IOException {
+        /*
+         * This method is quite similar to readByContinent. I use it to check if the
+         * continent they input is not exist in the csv file
+         */
         BufferedReader contRd = new BufferedReader(new FileReader("covid-data.csv"));
         String line;
         String[] tokens;
@@ -83,25 +90,33 @@ class Data {
     }
 
     static void readByContinent(String continent, Data dt) throws IOException {
-        int repeat;
+        int repeat; // this variable is used to help add data to object's instance
+
+        // Buffered Reader to read line by line. I don't use Scanner because I'm not
+        // parsing anything
         BufferedReader contRd = new BufferedReader(new FileReader("covid-data.csv"));
         String line;
         String[] tokens;
         while ((line = contRd.readLine()) != null) {
             repeat = 0;
-
             line = line + "0";// this line of code is to deal with empty cases, death, vaccinated, population
-            // line of data
-
             tokens = line.split(",");
 
+            // empty column will be assign = 0
             for (int i = 0; i < tokens.length; i++) {
                 if (tokens[i].equals("")) {
                     tokens[i] = "0";
                 }
             }
+            /*
+             * If the selected continent rows are found, new dates will be added, if existed
+             * dates appear, their statistics will be add to previous ones. The date is not
+             * listed in order, however, the index of the date and the index of its other
+             * columns will be the same, so it should be fine.
+             */
             if (covidAnalyse.textHandle(tokens[1]).equals(continent)) {
                 if (!dt.date.isEmpty()) {
+                    // existed dates will be added. only works if the arraylist is not empty
                     for (int i = 0; i < dt.date.size(); i++) {
                         if (tokens[3].equals(dt.date.get(i))) {
                             dt.newCase.set(i, (Integer.parseInt(tokens[4]) + dt.newCase.get(i)));
@@ -111,14 +126,14 @@ class Data {
                         }
                     }
                 }
-
+                // New dates will be appended
                 if (repeat == 0) {
                     dt.date.add(tokens[3]);
                     dt.newCase.add(Integer.parseInt(tokens[4]));
                     dt.newDeath.add(Integer.parseInt(tokens[5]));
                     dt.peopleVacinated.add(Integer.parseInt(tokens[6]));
                 }
-
+                // assign name of continent
                 dt.name = tokens[1];
             }
         }
