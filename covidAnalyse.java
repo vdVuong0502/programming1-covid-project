@@ -62,7 +62,6 @@ class Data {
             }
 
             readByContinent(continent, processedData);
-            System.out.println(processedData.date);
         }
     }
 
@@ -120,6 +119,7 @@ class Data {
                     dt.peopleVacinated.add(Integer.parseInt(tokens[6]));
                 }
 
+                dt.name = tokens[1];
             }
         }
 
