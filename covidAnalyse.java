@@ -13,7 +13,7 @@ public class covidAnalyse {
 
     }
 
-    static void exitCheck(String selection) {// This method check whether userwant to quit or not.
+    static void exitCheck(String selection) {// This method check whether user want to quit or not.
         selection = textHandle(selection);
         if (selection.equals("exit")) {
             System.out.println("Thank you for using. The program is exiting.");
