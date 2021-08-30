@@ -13,7 +13,7 @@ public class covidAnalyse {
 
     }
 
-    static void exitCheck(String selection) {// This method check whether user want to quit or not.
+    static void exitCheck(String selection) {// This method check whether userwant to quit or not.
         selection = textHandle(selection);
         if (selection.equals("exit")) {
             System.out.println("Thank you for using. The program is exiting.");
@@ -35,7 +35,6 @@ class Data {
     ArrayList<Integer> newCase = new ArrayList<Integer>();
     ArrayList<Integer> newDeath = new ArrayList<Integer>();
     ArrayList<Integer> peopleVacinated = new ArrayList<Integer>();
-    ArrayList<Integer> population = new ArrayList<Integer>();
 
     public static void createDataObject() throws IOException {
         // variable to check if exist.
@@ -62,6 +61,8 @@ class Data {
                 covidAnalyse.exitCheck(continent);
             }
 
+            readByContinent(continent, processedData);
+            System.out.println(processedData.date);
         }
     }
 
@@ -83,11 +84,16 @@ class Data {
     }
 
     static void readByContinent(String continent, Data dt) throws IOException {
+        int repeat;
         BufferedReader contRd = new BufferedReader(new FileReader("covid-data.csv"));
         String line;
         String[] tokens;
         while ((line = contRd.readLine()) != null) {
-            line = contRd.readLine();
+            repeat = 0;
+
+            line = line + "0";// this line of code is to deal with empty cases, death, vaccinated, population
+            // line of data
+
             tokens = line.split(",");
 
             for (int i = 0; i < tokens.length; i++) {
@@ -95,7 +101,26 @@ class Data {
                     tokens[i] = "0";
                 }
             }
+            if (covidAnalyse.textHandle(tokens[1]).equals(continent)) {
+                if (!dt.date.isEmpty()) {
+                    for (int i = 0; i < dt.date.size(); i++) {
+                        if (tokens[3].equals(dt.date.get(i))) {
+                            dt.newCase.set(i, (Integer.parseInt(tokens[4]) + dt.newCase.get(i)));
+                            dt.newDeath.set(i, (Integer.parseInt(tokens[5]) + dt.newDeath.get(i)));
+                            dt.peopleVacinated.set(i, (Integer.parseInt(tokens[6]) + dt.peopleVacinated.get(i)));
+                            repeat++;
+                        }
+                    }
+                }
 
+                if (repeat == 0) {
+                    dt.date.add(tokens[3]);
+                    dt.newCase.add(Integer.parseInt(tokens[4]));
+                    dt.newDeath.add(Integer.parseInt(tokens[5]));
+                    dt.peopleVacinated.add(Integer.parseInt(tokens[6]));
+                }
+
+            }
         }
 
     }
