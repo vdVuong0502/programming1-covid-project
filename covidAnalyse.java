@@ -17,13 +17,16 @@ public class covidAnalyse {
         while (true) {
             // main program
             prsData = Data.selectDataByArea(sc, prsData);
-            prsData.sortByDate();
 
+            prsData.sortByDate();
+            prsData.timeFilter(sc);
+            System.out.println(prsData.startDate);
+            System.out.println(prsData.endDate);
             // main program
             // leave this alone....
             while (true) {
                 System.out.println("Do you want to continue(y/n)? ");
-                System.out.print(">>>");
+                System.out.print(">>> ");
                 answer = sc.nextLine();
                 if (answer.equals("y") || answer.equals("n")) {
                     break;
@@ -68,7 +71,7 @@ class Data {
     ArrayList<Integer> newCase = new ArrayList<Integer>();
     ArrayList<Integer> newDeath = new ArrayList<Integer>();
     ArrayList<Integer> peopleVacinated = new ArrayList<Integer>();
-    DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yyyy");
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/M/d");
     LocalDate startDate;
     LocalDate endDate;
 
@@ -79,7 +82,7 @@ class Data {
                 Please specify a geographic area whose data you want to view:
                 \t1. By continent
                 \t2. By country""");
-        System.out.print(">>>");
+        System.out.print(">>> ");
         selection = userInput.nextLine();
         covidAnalyse.exitCheck(selection);
 
@@ -89,7 +92,7 @@ class Data {
                     Invalid selection. Please check again:
                     \t1. By continent
                     \t2. By country""");
-            System.out.print(">>>");
+            System.out.print(">>> ");
             selection = userInput.nextLine();
             covidAnalyse.exitCheck(selection);
         }
@@ -97,31 +100,32 @@ class Data {
         // Specify by continent
         if (selection.equals("1")) {
             System.out.println("Enter a continent: ");
-            System.out.print(">>>");
+            System.out.print(">>> ");
             String continent = covidAnalyse.textHandle(userInput.nextLine());
             covidAnalyse.exitCheck(continent);
 
             while (!findContinent(continent)) {
                 System.out.println("Continent not found. Please enter continent again or enter \"exit\" to leave: ");
-                System.out.print(">>>");
+                System.out.print(">>> ");
                 continent = covidAnalyse.textHandle(userInput.nextLine());
                 covidAnalyse.exitCheck(continent);
             }
-
+            System.out.println("Loading...");
             readByContinent(continent, processedData);
 
         } else {
             System.out.println("Enter a country: ");
-            System.out.print(">>>");
+            System.out.print(">>> ");
             String country = covidAnalyse.textHandle(userInput.nextLine());
             covidAnalyse.exitCheck(country);
 
             while (!findCountry(country)) {
                 System.out.println("Country not found. Please enter country again or enter \"exit\" to leave: ");
-                System.out.print(">>>");
+                System.out.print(">>> ");
                 country = covidAnalyse.textHandle(userInput.nextLine());
                 covidAnalyse.exitCheck(country);
             }
+            System.out.println("Loading...");
             readByCountry(country, processedData);
         }
 
@@ -164,7 +168,7 @@ class Data {
                     \t1. A pair of start date and end date (inclusive).
                     \t2. A number of days or weeks from a particular date.
                     \t3. A number of days or weeks to a particular date.""");
-        System.out.print(">>>");
+        System.out.print(">>> ");
         String selection = sc.nextLine();
         covidAnalyse.exitCheck(selection);
 
@@ -175,20 +179,162 @@ class Data {
                         \t1. A pair of start date and end date (inclusive).
                         \t2. A number of days or weeks from a particular date.
                         \t3. A number of days or weeks to a particular date.""");
-            System.out.print(">>>");
+            System.out.print(">>> ");
             selection = sc.nextLine();
             covidAnalyse.exitCheck(selection);
         }
         if (selection.equals("1")) {
-
+            pairOfDates(sc);
         } else if (selection.equals("2")) {
+            System.out.println("""
+                    Choose days for weeks from a date:
+                        \t1. Days from a date.
+                        \t2. Weeks from a date.""");
+            System.out.print(">>> ");
+            selection = sc.nextLine();
+            covidAnalyse.exitCheck(selection);
 
+            while (!(selection.equals("1")) && !(selection.equals("2"))) {
+                System.out.println("=======================================");
+                System.out.println("""
+                        Invalid input. Choose days for weeks or "exit" to leave:
+                        \t1. Days from a date.
+                        \t2. Weeks from a date.""");
+                System.out.print(">>> ");
+                selection = sc.nextLine();
+                covidAnalyse.exitCheck(selection);
+            }
+
+            if (selection.equals("1")) {
+                daysFromDate();
+            } else {
+                weeksFromDate();
+            }
         } else {
 
         }
     }
 
-    void pairOfDates() {
+    void daysFromDate() {
+
+    }
+
+    void weeksFromDate() {
+
+    }
+
+    boolean isDateFormat(String date) {
+        try {
+            LocalDate.parse(date, df);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    boolean isLeapYear(int year) {
+        boolean leap = false;
+
+        // if the year is divided by 4
+        if (year % 4 == 0) {
+
+            // if the year is century
+            if (year % 100 == 0) {
+
+                // if year is divided by 400
+                // then it is a leap year
+                if (year % 400 == 0)
+                    leap = true;
+                else
+                    leap = false;
+            }
+
+            // if the year is not century
+            else
+                leap = true;
+        }
+
+        else {
+            leap = false;
+        }
+
+        return leap;
+    }
+
+    String checkDateInput(Scanner sc, String dateStr) {
+
+    }
+
+    void pairOfDates(Scanner sc) {
+        String dateStr;
+        System.out.print("""
+                Enter start date and end start base on the format "YYYY/MM/DD"
+                \sNOTE: You can only choose start date and end date between """);
+        System.out.println(" " + date.get(0) + " and " + date.get(date.size() - 1));
+        System.out.println("Enter start date: ");
+        System.out.print(">>> ");
+        while (true) {
+            dateStr = sc.nextLine();
+            covidAnalyse.exitCheck(dateStr);
+            while (!isDateFormat(dateStr)) {
+                System.out.println("Your input is not following the format, please try again: ");
+                System.out.print(">>> ");
+                dateStr = sc.nextLine();
+                covidAnalyse.exitCheck(dateStr);
+            }
+            String[] tokens = dateStr.split("/");
+            if (!isLeapYear(Integer.parseInt(tokens[0]))) {
+                if (Integer.parseInt(tokens[1]) == 2) {
+                    if (Integer.parseInt(tokens[2]) > 28) {
+                        System.out.println(tokens[1]
+                                + " is not leap year, February days cannot exceed 28.\nPlease enter date again");
+                        System.out.print(">>> ");
+                        continue;
+                    }
+                }
+            }
+            if (LocalDate.parse(dateStr, df).isBefore(date.get(0))
+                    || LocalDate.parse(dateStr, df).isAfter(date.get(date.size() - 1))) {
+                System.out.println("Your input exceed possible time range. Please enter again:");
+                System.out.print(">>> ");
+                continue;
+            } else {
+                break;
+            }
+        }
+        startDate = LocalDate.parse(dateStr, df);
+        System.out.println("Enter end date: ");
+        System.out.print(">>> ");
+        while (true) {
+            dateStr = sc.nextLine();
+            covidAnalyse.exitCheck(dateStr);
+            while (!isDateFormat(dateStr)) {
+                System.out.println("Your input is not following the format, please try again: ");
+                System.out.print(">>> ");
+                dateStr = sc.nextLine();
+                covidAnalyse.exitCheck(dateStr);
+            }
+            String[] tokens = dateStr.split("/");
+            if (!isLeapYear(Integer.parseInt(tokens[1]))) {
+                if (tokens[2].equals("2")) {
+                    if (Integer.parseInt(tokens[3]) > 29) {
+                        System.out.println(tokens[1]
+                                + " is not leap year, February days cannot exceed 28.\nPlease enter date again");
+                        System.out.print(">>> ");
+                        continue;
+                    }
+                }
+            }
+            if (LocalDate.parse(dateStr, df).isBefore(date.get(0))
+                    || LocalDate.parse(dateStr, df).isAfter(date.get(date.size() - 1))) {
+                System.out.println("Your input exceed possible time range. Please enter again:");
+                System.out.print(">>> ");
+                continue;
+            } else {
+                break;
+            }
+        }
+        endDate = LocalDate.parse(dateStr, df);
 
     }
 
