@@ -17,10 +17,7 @@ public class covidAnalyse {
         while (true) {
             // main program
             prsData = Data.selectDataByArea(sc, prsData);
-            System.out.println(prsData.date);
-            System.out.println(prsData.newCase);
-            System.out.println(prsData.date.size());
-            System.out.println(prsData.newCase.size());
+            prsData.sortByDate();
 
             // main program
             // leave this alone....
