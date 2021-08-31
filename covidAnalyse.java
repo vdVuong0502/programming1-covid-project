@@ -12,8 +12,10 @@ public class covidAnalyse {
         System.out.println("You can type \"exit\" anytime you want to end the program.");
         System.out.println("==============");
         while (true) {
+            // main program
             prsData = Data.selectDataByArea(sc, prsData);
 
+            // main program
             // leave this alone....
             while (true) {
                 System.out.println("Do you want to continue(y/n)? ");
