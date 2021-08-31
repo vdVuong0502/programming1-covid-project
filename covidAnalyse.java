@@ -1,5 +1,8 @@
 import java.util.*;
 import java.io.*;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.time.format.*;
 
 public class covidAnalyse {
     public static void main(String[] args) throws IOException {
@@ -14,11 +17,16 @@ public class covidAnalyse {
         while (true) {
             // main program
             prsData = Data.selectDataByArea(sc, prsData);
+            System.out.println(prsData.date);
+            System.out.println(prsData.newCase);
+            System.out.println(prsData.date.size());
+            System.out.println(prsData.newCase.size());
 
             // main program
             // leave this alone....
             while (true) {
                 System.out.println("Do you want to continue(y/n)? ");
+                System.out.print(">>>");
                 answer = sc.nextLine();
                 if (answer.equals("y") || answer.equals("n")) {
                     break;
@@ -59,10 +67,13 @@ public class covidAnalyse {
 
 class Data {
     String name;
-    ArrayList<String> date = new ArrayList<String>();
+    ArrayList<LocalDate> date = new ArrayList<LocalDate>();
     ArrayList<Integer> newCase = new ArrayList<Integer>();
     ArrayList<Integer> newDeath = new ArrayList<Integer>();
     ArrayList<Integer> peopleVacinated = new ArrayList<Integer>();
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yyyy");
+    LocalDate startDate;
+    LocalDate endDate;
 
     public static Data selectDataByArea(Scanner userInput, Data processedData) throws IOException {
         // Select area
@@ -71,6 +82,7 @@ class Data {
                 Please specify a geographic area whose data you want to view:
                 \t1. By continent
                 \t2. By country""");
+        System.out.print(">>>");
         selection = userInput.nextLine();
         covidAnalyse.exitCheck(selection);
 
@@ -80,18 +92,21 @@ class Data {
                     Invalid selection. Please check again:
                     \t1. By continent
                     \t2. By country""");
+            System.out.print(">>>");
             selection = userInput.nextLine();
             covidAnalyse.exitCheck(selection);
         }
 
         // Specify by continent
         if (selection.equals("1")) {
-            System.out.print("Enter a continent: ");
+            System.out.println("Enter a continent: ");
+            System.out.print(">>>");
             String continent = covidAnalyse.textHandle(userInput.nextLine());
             covidAnalyse.exitCheck(continent);
 
             while (!findContinent(continent)) {
-                System.out.print("Continent not found. Please enter continent again or enter \"exit\" to leave: ");
+                System.out.println("Continent not found. Please enter continent again or enter \"exit\" to leave: ");
+                System.out.print(">>>");
                 continent = covidAnalyse.textHandle(userInput.nextLine());
                 covidAnalyse.exitCheck(continent);
             }
@@ -99,12 +114,14 @@ class Data {
             readByContinent(continent, processedData);
 
         } else {
-            System.out.print("Enter a country: ");
+            System.out.println("Enter a country: ");
+            System.out.print(">>>");
             String country = covidAnalyse.textHandle(userInput.nextLine());
             covidAnalyse.exitCheck(country);
 
             while (!findCountry(country)) {
-                System.out.print("Country not found. Please enter country again or enter \"exit\" to leave: ");
+                System.out.println("Country not found. Please enter country again or enter \"exit\" to leave: ");
+                System.out.print(">>>");
                 country = covidAnalyse.textHandle(userInput.nextLine());
                 covidAnalyse.exitCheck(country);
             }
@@ -115,12 +132,67 @@ class Data {
 
     }
 
+    void sortByDate() {
+
+        /* this method is used for sorting all arraylists by ascending date */
+        int tempInt;
+        LocalDate tempDate;
+
+        for (int i = 0; i < date.size(); i++) {
+            for (int j = i + 1; j < date.size(); j++) {
+                if (date.get(i).isAfter(date.get(j))) { // swap elements if not in order
+                    tempDate = date.get(i);
+                    date.set(i, date.get(j));
+                    date.set(j, tempDate);
+
+                    tempInt = newCase.get(i);
+                    newCase.set(i, newCase.get(j));
+                    newCase.set(j, tempInt);
+
+                    tempInt = newDeath.get(i);
+                    newDeath.set(i, newDeath.get(j));
+                    newDeath.set(j, tempInt);
+
+                    tempInt = peopleVacinated.get(i);
+                    peopleVacinated.set(i, peopleVacinated.get(j));
+                    peopleVacinated.set(j, tempInt);
+                }
+            }
+        }
+    }
+
     void timeFilter(Scanner sc) {
         System.out.println("""
                 Specify a time range:
                     \t1. A pair of start date and end date (inclusive).
                     \t2. A number of days or weeks from a particular date.
                     \t3. A number of days or weeks to a particular date.""");
+        System.out.print(">>>");
+        String selection = sc.nextLine();
+        covidAnalyse.exitCheck(selection);
+
+        while (!(selection.equals("1")) && !(selection.equals("2")) && !(selection.equals("3"))) {
+            System.out.println("=======================================");
+            System.out.println("""
+                    Invalid input. Specify time range again or enter "exit" to leave:
+                        \t1. A pair of start date and end date (inclusive).
+                        \t2. A number of days or weeks from a particular date.
+                        \t3. A number of days or weeks to a particular date.""");
+            System.out.print(">>>");
+            selection = sc.nextLine();
+            covidAnalyse.exitCheck(selection);
+        }
+        if (selection.equals("1")) {
+
+        } else if (selection.equals("2")) {
+
+        } else {
+
+        }
+    }
+
+    void pairOfDates() {
+
     }
 
     static boolean findContinent(String continent) throws IOException {
@@ -166,6 +238,7 @@ class Data {
     }
 
     static void readByContinent(String continent, Data dt) throws IOException {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yyyy");
         int repeat; // this variable is used to help add data to object's instance
 
         // Buffered Reader to read line by line. I don't use Scanner because I'm not
@@ -203,7 +276,7 @@ class Data {
                 if (!dt.date.isEmpty()) {
                     // existed dates will be added. only works if the arraylist is not empty
                     for (int i = 0; i < dt.date.size(); i++) {
-                        if (tokens[3].equals(dt.date.get(i))) {
+                        if (LocalDate.parse(tokens[3], df).isEqual(dt.date.get(i))) {
                             dt.newCase.set(i, (Integer.parseInt(tokens[4]) + dt.newCase.get(i)));
                             dt.newDeath.set(i, (Integer.parseInt(tokens[5]) + dt.newDeath.get(i)));
                             dt.peopleVacinated.set(i, (Integer.parseInt(tokens[6]) + dt.peopleVacinated.get(i)));
@@ -213,7 +286,7 @@ class Data {
                 }
                 // New dates will be appended
                 if (repeat == 0) {
-                    dt.date.add(tokens[3]);
+                    dt.date.add(LocalDate.parse(tokens[3], df));
                     dt.newCase.add(Integer.parseInt(tokens[4]));
                     dt.newDeath.add(Integer.parseInt(tokens[5]));
                     dt.peopleVacinated.add(Integer.parseInt(tokens[6]));
@@ -227,7 +300,7 @@ class Data {
     }
 
     static void readByCountry(String country, Data dt) throws IOException {
-
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("M/d/yyyy");
         // Buffered Reader to read line by line. I don't use Scanner because I'm not
         // parsing anything
         BufferedReader countryRd = new BufferedReader(new FileReader("covid-data.csv"));
@@ -260,7 +333,7 @@ class Data {
              */
             if (covidAnalyse.textHandle(tokens[2]).equals(country)) {
                 // New dates will be appended
-                dt.date.add(tokens[3]);
+                dt.date.add(LocalDate.parse(tokens[3], df));
                 dt.newCase.add(Integer.parseInt(tokens[4]));
                 dt.newDeath.add(Integer.parseInt(tokens[5]));
                 dt.peopleVacinated.add(Integer.parseInt(tokens[6]));
