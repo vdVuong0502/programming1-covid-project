@@ -52,6 +52,15 @@ class Data {
         selection = userInput.nextLine();
         covidAnalyse.exitCheck(selection);
 
+        while (!(selection.equals("1")) && !(selection.equals("2"))) {
+            System.out.println("=======================================");
+            System.out.println("Invalid selection. Please check again:");
+            System.out.println("1. By continent");
+            System.out.println("2. By country");
+            selection = userInput.nextLine();
+            covidAnalyse.exitCheck(selection);
+        }
+
         // Specify by continent
         if (selection.equals("1")) {
             System.out.print("Enter a continent: ");
@@ -65,7 +74,20 @@ class Data {
             }
 
             readByContinent(continent, processedData);
+
+        } else {
+            System.out.print("Enter a country: ");
+            String country = covidAnalyse.textHandle(userInput.nextLine());
+            covidAnalyse.exitCheck(country);
+
+            while (!findCountry(country)) {
+                System.out.print("Country not found. Please enter country again or enter \"exit\" to leave: ");
+                country = covidAnalyse.textHandle(userInput.nextLine());
+                covidAnalyse.exitCheck(country);
+            }
+            readByCountry(country, processedData);
         }
+
     }
 
     static boolean findContinent(String continent) throws IOException {
@@ -89,6 +111,27 @@ class Data {
         return found;
     }
 
+    static boolean findCountry(String country) throws IOException {
+        /*
+         * This method is quite similar to find continent. I use it to check if the
+         * country they input is not exist in the csv file
+         */
+        BufferedReader countryRd = new BufferedReader(new FileReader("covid-data.csv"));
+        String line;
+        String[] tokens;
+        boolean found = false;
+
+        while (((line = countryRd.readLine()) != null) && !found) {
+            tokens = line.split(",");
+            if (covidAnalyse.textHandle(tokens[2]).equals(country)) {
+                found = true;
+                break;
+            }
+        }
+        countryRd.close();
+        return found;
+    }
+
     static void readByContinent(String continent, Data dt) throws IOException {
         int repeat; // this variable is used to help add data to object's instance
 
@@ -105,6 +148,12 @@ class Data {
             // empty column will be assign = 0
             for (int i = 0; i < tokens.length; i++) {
                 if (tokens[i].equals("")) {
+                    tokens[i] = "0";
+                }
+            }
+            // This for loop is to handle negative data of new case and new death
+            for (int i = 4; i < 7; i++) {
+                if (Integer.parseInt(tokens[i]) < 0) {
                     tokens[i] = "0";
                 }
             }
@@ -137,7 +186,51 @@ class Data {
                 dt.name = tokens[1];
             }
         }
+        contRd.close();
 
     }
 
+    static void readByCountry(String country, Data dt) throws IOException {
+
+        // Buffered Reader to read line by line. I don't use Scanner because I'm not
+        // parsing anything
+        BufferedReader countryRd = new BufferedReader(new FileReader("covid-data.csv"));
+        String line;
+        String[] tokens;
+        while ((line = countryRd.readLine()) != null) {
+            line = line + "0";// this line of code is to deal with empty cases, death, vaccinated, population
+            tokens = line.split(",");
+
+            // empty column will be assign = 0
+            for (int i = 0; i < tokens.length; i++) {
+                if (tokens[i].equals("")) {
+                    tokens[i] = "0";
+                }
+            }
+
+            // This for loop is to handle negative data of new case and new death
+            for (int i = 4; i < 7; i++) {
+                if (Integer.parseInt(tokens[i]) < 0) {
+                    tokens[i] = "0";
+                }
+            }
+
+            /*
+             * If the selected country rows are found,that rows statistics will be added.
+             * The date is not listed in order, however, the index of the date and the index
+             * of its other columns will be the same, so it should be fine.
+             */
+            if (covidAnalyse.textHandle(tokens[2]).equals(country)) {
+                // New dates will be appended
+                dt.date.add(tokens[3]);
+                dt.newCase.add(Integer.parseInt(tokens[4]));
+                dt.newDeath.add(Integer.parseInt(tokens[5]));
+                dt.peopleVacinated.add(Integer.parseInt(tokens[6]));
+                // assign name of country
+                dt.name = tokens[2];
+            }
+        }
+        countryRd.close();
+
+    }
 }
