@@ -3,13 +3,35 @@ import java.io.*;
 
 public class covidAnalyse {
     public static void main(String[] args) throws IOException {
+        Scanner sc = new Scanner(System.in);
+        String answer;
+        Data prsData = new Data();
 
         System.out.println("Welcome to covid data processing and analytics tool.");
         System.out.println("==============");
         System.out.println("You can type \"exit\" anytime you want to end the program.");
         System.out.println("==============");
+        while (true) {
+            prsData = Data.selectDataByArea(sc, prsData);
 
-        Data.createDataObject();
+            // leave this alone....
+            while (true) {
+                System.out.println("Do you want to continue(y/n)? ");
+                answer = sc.nextLine();
+                if (answer.equals("y") || answer.equals("n")) {
+                    break;
+                }
+                System.out.print("invalid input.");
+
+            }
+            if (answer.equals("y")) {
+                prsData = null;
+                continue;
+            } else {
+                System.out.print("Goodbye");
+                break;
+            }
+        }
 
     }
 
@@ -40,23 +62,22 @@ class Data {
     ArrayList<Integer> newDeath = new ArrayList<Integer>();
     ArrayList<Integer> peopleVacinated = new ArrayList<Integer>();
 
-    public static void createDataObject() throws IOException {
-        // Create an empty object
-        Data processedData = new Data();
+    public static Data selectDataByArea(Scanner userInput, Data processedData) throws IOException {
         // Select area
         String selection;
-        Scanner userInput = new Scanner(System.in);
-        System.out.println("Please specify a geographic area whose data you want to view:");
-        System.out.println("1. By continent");
-        System.out.println("2. By country");
+        System.out.println("""
+                Please specify a geographic area whose data you want to view:
+                \t1. By continent
+                \t2. By country""");
         selection = userInput.nextLine();
         covidAnalyse.exitCheck(selection);
 
         while (!(selection.equals("1")) && !(selection.equals("2"))) {
             System.out.println("=======================================");
-            System.out.println("Invalid selection. Please check again:");
-            System.out.println("1. By continent");
-            System.out.println("2. By country");
+            System.out.println("""
+                    Invalid selection. Please check again:
+                    \t1. By continent
+                    \t2. By country""");
             selection = userInput.nextLine();
             covidAnalyse.exitCheck(selection);
         }
@@ -88,6 +109,16 @@ class Data {
             readByCountry(country, processedData);
         }
 
+        return processedData;
+
+    }
+
+    void timeFilter(Scanner sc) {
+        System.out.println("""
+                Specify a time range:
+                    \t1. A pair of start date and end date (inclusive).
+                    \t2. A number of days or weeks from a particular date.
+                    \t3. A number of days or weeks to a particular date.""");
     }
 
     static boolean findContinent(String continent) throws IOException {
@@ -152,11 +183,14 @@ class Data {
                 }
             }
             // This for loop is to handle negative data of new case and new death
-            for (int i = 4; i < 7; i++) {
-                if (Integer.parseInt(tokens[i]) < 0) {
-                    tokens[i] = "0";
+            if (!tokens[0].equals("iso_code")) {
+                for (int i = 4; i < 7; i++) {
+                    if (Integer.parseInt(tokens[i]) < 0) {
+                        tokens[i] = "0";
+                    }
                 }
             }
+
             /*
              * If the selected continent rows are found, new dates will be added, if existed
              * dates appear, their statistics will be add to previous ones. The date is not
@@ -209,9 +243,11 @@ class Data {
             }
 
             // This for loop is to handle negative data of new case and new death
-            for (int i = 4; i < 7; i++) {
-                if (Integer.parseInt(tokens[i]) < 0) {
-                    tokens[i] = "0";
+            if (!tokens[0].equals("iso_code")) {
+                for (int i = 4; i < 7; i++) {
+                    if (Integer.parseInt(tokens[i]) < 0) {
+                        tokens[i] = "0";
+                    }
                 }
             }
 
