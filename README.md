@@ -11,5 +11,5 @@ tạo một object để lưu data đã được lọc sau khi chọn area và t
 summary sẽ tạo thêm 1 class nữa và xử lý dựa trên dữ liệu đã được lọc của Data
 in data dưới dạng chart hoặc table thì sẽ nằm chung trong 1 class khác nữa
 chi tiết mình sẽ bàn lúc họp
-hiện tại mình đã làm xong lưu data khi chọn continent.
-
+hiện tại mình đã làm xong lưu data khi chọn continent/ chon country.
+people vaccinated data sẽ được handle khi chỉnh data theo time range.
