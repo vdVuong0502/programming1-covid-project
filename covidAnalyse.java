@@ -208,7 +208,7 @@ class Data {
             if (selection.equals("1")) {
                 daysFromDate(sc);
             } else {
-                weeksFromDate();
+                weeksFromDate(sc);
             }
         } else {
 
@@ -225,15 +225,15 @@ class Data {
         }
     }
 
-    String daysDurationInput(Scanner sc, String days) {
-        days = sc.nextLine();
-        covidAnalyse.exitCheck(days);
-        while (!checkNumberInput(days)) {
+    String durationInput(Scanner sc, String duration) {
+        duration = sc.nextLine();
+        covidAnalyse.exitCheck(duration);
+        while (!checkNumberInput(duration)) {
             System.out.println("Input must be an integer: ");
-            days = sc.nextLine();
-            covidAnalyse.exitCheck(days);
+            duration = sc.nextLine();
+            covidAnalyse.exitCheck(duration);
         }
-        return days;
+        return duration;
     }
 
     void daysFromDate(Scanner sc) {
@@ -247,7 +247,7 @@ class Data {
         System.out.println("Enter the number of days from base date: ");
         System.out.print(">>> ");
 
-        days = daysDurationInput(sc, days);
+        days = durationInput(sc, days);
         endDate = startDate.plusDays(Integer.parseInt(days));
 
         while (!checkInTimeRange(endDate.format(df))) {
@@ -255,13 +255,33 @@ class Data {
                     Time range you chose out of possible range. Please choose days again.
                     \sPossible time range: """);
             System.out.println("\t" + date.get(0) + " -- " + date.get(date.size() - 1));
-            days = daysDurationInput(sc, days);
+            days = durationInput(sc, days);
             endDate = startDate.plusDays(Integer.parseInt(days));
         }
     }
 
-    void weeksFromDate() {
+    void weeksFromDate(Scanner sc) {
+        String dateStr = "";
+        String weeks = "";
+        System.out.println("Enter base date: ");
+        System.out.print(">>> ");
+        dateStr = checkDateInput(sc, dateStr);
+        startDate = LocalDate.parse(dateStr, df);
 
+        System.out.println("Enter the number of weeks from base date: ");
+        System.out.print(">>> ");
+
+        weeks = durationInput(sc, weeks);
+        endDate = startDate.plusDays(Long.parseLong(weeks) * 7);
+
+        while (!checkInTimeRange(endDate.format(df))) {
+            System.out.println("""
+                    Time range you chose out of possible range. Please choose weeks again.
+                    \sPossible time range: """);
+            System.out.println("\t" + date.get(0) + " -- " + date.get(date.size() - 1));
+            weeks = durationInput(sc, weeks);
+            endDate = startDate.plusDays(Long.parseLong(weeks) * 7);
+        }
     }
 
     boolean isDateFormat(String date) {
