@@ -215,6 +215,16 @@ class Data {
         }
     }
 
+    boolean checkNumberInput(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (Exception e) {
+            // TODO: handle exception
+            return false;
+        }
+    }
+
     void daysFromDate() {
 
     }
@@ -261,79 +271,62 @@ class Data {
         return leap;
     }
 
-    String checkDateInput(Scanner sc, String dateStr) {
+    boolean checkNotLeapYearInput(String dateStr) {
+        String[] tokens = dateStr.split("/");
+        if (!isLeapYear(Integer.parseInt(tokens[0]))) {
+            if (Integer.parseInt(tokens[1]) == 2) {
+                if (Integer.parseInt(tokens[2]) > 28) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
+    boolean checkInTimeRange(String dateStr) {
+        if (LocalDate.parse(dateStr, df).isBefore(date.get(0))
+                || LocalDate.parse(dateStr, df).isAfter(date.get(date.size() - 1))) {
+            return false;
+        }
+        return true;
+    }
+
+    String checkDateInput(Scanner sc, String dateStr) {
+        dateStr = sc.nextLine();
+        covidAnalyse.exitCheck(dateStr);
+        if (!isDateFormat(dateStr)) {
+            System.out.println("Your input is not following the format, please try again: ");
+            System.out.print(">>> ");
+            checkDateInput(sc, dateStr);
+        }
+
+        if (!checkNotLeapYearInput(dateStr)) {
+            System.out.println("This is not leap year, February days cannot exceed 28.\nPlease enter date again");
+            System.out.print(">>> ");
+            checkDateInput(sc, dateStr);
+        }
+        if (!checkInTimeRange(dateStr)) {
+            System.out.println("Your input exceed possible time range. Please enter again:");
+            System.out.print(">>> ");
+            checkDateInput(sc, dateStr);
+        }
+        return dateStr;
     }
 
     void pairOfDates(Scanner sc) {
-        String dateStr;
+        String dateStr = "";
         System.out.print("""
                 Enter start date and end start base on the format "YYYY/MM/DD"
                 \sNOTE: You can only choose start date and end date between """);
         System.out.println(" " + date.get(0) + " and " + date.get(date.size() - 1));
         System.out.println("Enter start date: ");
         System.out.print(">>> ");
-        while (true) {
-            dateStr = sc.nextLine();
-            covidAnalyse.exitCheck(dateStr);
-            while (!isDateFormat(dateStr)) {
-                System.out.println("Your input is not following the format, please try again: ");
-                System.out.print(">>> ");
-                dateStr = sc.nextLine();
-                covidAnalyse.exitCheck(dateStr);
-            }
-            String[] tokens = dateStr.split("/");
-            if (!isLeapYear(Integer.parseInt(tokens[0]))) {
-                if (Integer.parseInt(tokens[1]) == 2) {
-                    if (Integer.parseInt(tokens[2]) > 28) {
-                        System.out.println(tokens[1]
-                                + " is not leap year, February days cannot exceed 28.\nPlease enter date again");
-                        System.out.print(">>> ");
-                        continue;
-                    }
-                }
-            }
-            if (LocalDate.parse(dateStr, df).isBefore(date.get(0))
-                    || LocalDate.parse(dateStr, df).isAfter(date.get(date.size() - 1))) {
-                System.out.println("Your input exceed possible time range. Please enter again:");
-                System.out.print(">>> ");
-                continue;
-            } else {
-                break;
-            }
-        }
+        dateStr = checkDateInput(sc, dateStr);
         startDate = LocalDate.parse(dateStr, df);
+
         System.out.println("Enter end date: ");
         System.out.print(">>> ");
-        while (true) {
-            dateStr = sc.nextLine();
-            covidAnalyse.exitCheck(dateStr);
-            while (!isDateFormat(dateStr)) {
-                System.out.println("Your input is not following the format, please try again: ");
-                System.out.print(">>> ");
-                dateStr = sc.nextLine();
-                covidAnalyse.exitCheck(dateStr);
-            }
-            String[] tokens = dateStr.split("/");
-            if (!isLeapYear(Integer.parseInt(tokens[1]))) {
-                if (tokens[2].equals("2")) {
-                    if (Integer.parseInt(tokens[3]) > 29) {
-                        System.out.println(tokens[1]
-                                + " is not leap year, February days cannot exceed 28.\nPlease enter date again");
-                        System.out.print(">>> ");
-                        continue;
-                    }
-                }
-            }
-            if (LocalDate.parse(dateStr, df).isBefore(date.get(0))
-                    || LocalDate.parse(dateStr, df).isAfter(date.get(date.size() - 1))) {
-                System.out.println("Your input exceed possible time range. Please enter again:");
-                System.out.print(">>> ");
-                continue;
-            } else {
-                break;
-            }
-        }
+        dateStr = checkDateInput(sc, dateStr);
         endDate = LocalDate.parse(dateStr, df);
 
     }
