@@ -20,8 +20,15 @@ public class covidAnalyse {
 
             prsData.sortByDate();
             prsData.timeFilter(sc);
+
+            // test output
             System.out.println(prsData.startDate);
             System.out.println(prsData.endDate);
+            System.out.println(prsData.date);
+            System.out.println(prsData.newCase);
+            System.out.println(prsData.newDeath);
+            System.out.println(prsData.peopleVacinated);
+
             // main program
             // leave this alone....
             while (true) {
@@ -250,6 +257,24 @@ class Data {
                 daysToDate(sc);
             } else {
                 weeksToDate(sc);
+            }
+        }
+
+        if (!startDate.isEqual(date.get(0))) {
+            while (!date.get(0).isEqual(startDate.minusDays(1))) {
+                date.remove(0);
+                newCase.remove(0);
+                newDeath.remove(0);
+                peopleVacinated.remove(0);
+            }
+        }
+
+        if (!endDate.isEqual(date.get(date.size() - 1))) {
+            while (!date.get(date.size() - 1).isEqual(endDate.plusDays(1))) {
+                date.remove(date.size() - 1);
+                newCase.remove(date.size() - 1);
+                newDeath.remove(date.size() - 1);
+                peopleVacinated.remove(date.size() - 1);
             }
         }
     }
