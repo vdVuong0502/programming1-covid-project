@@ -11,9 +11,9 @@ public class covidAnalyse {
         Data prsData = new Data();
 
         System.out.println("Welcome to covid data processing and analytics tool.");
-        System.out.println("==============");
+        System.out.println("==========================");
         System.out.println("You can type \"exit\" anytime you want to end the program.");
-        System.out.println("==============");
+        System.out.println("==========================");
         while (true) {
             // main program
             prsData = Data.selectDataByArea(sc, prsData);
@@ -25,17 +25,17 @@ public class covidAnalyse {
             // main program
             // leave this alone....
             while (true) {
+                System.out.println("==========================");
                 System.out.println("Do you want to continue(y/n)? ");
                 System.out.print(">>> ");
                 answer = sc.nextLine();
                 if (answer.equals("y") || answer.equals("n")) {
                     break;
                 }
-                System.out.print("invalid input.");
+                System.out.print("Invalid input.");
 
             }
             if (answer.equals("y")) {
-                prsData = null;
                 continue;
             } else {
                 System.out.print("Goodbye");
@@ -48,7 +48,9 @@ public class covidAnalyse {
     static void exitCheck(String selection) {// This method check whether user want to quit or not.
         selection = textHandle(selection);
         if (selection.equals("exit")) {
+            System.out.println("==========================");
             System.out.println("Thank you for using. The program is exiting.");
+            System.out.println("==========================");
             System.exit(0);
         }
     }
@@ -87,7 +89,7 @@ class Data {
         covidAnalyse.exitCheck(selection);
 
         while (!(selection.equals("1")) && !(selection.equals("2"))) {
-            System.out.println("=======================================");
+            System.out.println("==========================");
             System.out.println("""
                     Invalid selection. Please check again:
                     \t1. By continent
@@ -105,6 +107,7 @@ class Data {
             covidAnalyse.exitCheck(continent);
 
             while (!findContinent(continent)) {
+                System.out.println("==========================");
                 System.out.println("Continent not found. Please enter continent again or enter \"exit\" to leave: ");
                 System.out.print(">>> ");
                 continent = covidAnalyse.textHandle(userInput.nextLine());
@@ -120,6 +123,7 @@ class Data {
             covidAnalyse.exitCheck(country);
 
             while (!findCountry(country)) {
+                System.out.println("==========================");
                 System.out.println("Country not found. Please enter country again or enter \"exit\" to leave: ");
                 System.out.print(">>> ");
                 country = covidAnalyse.textHandle(userInput.nextLine());
@@ -163,6 +167,10 @@ class Data {
     }
 
     void timeFilter(Scanner sc) {
+        /* This method is used for filter data based on user's chosen time range */
+
+        // choose time range
+        System.out.println("==========================");
         System.out.println("""
                 Specify a time range:
                     \t1. A pair of start date and end date (inclusive).
@@ -171,9 +179,9 @@ class Data {
         System.out.print(">>> ");
         String selection = sc.nextLine();
         covidAnalyse.exitCheck(selection);
-
+        // selection validate
         while (!(selection.equals("1")) && !(selection.equals("2")) && !(selection.equals("3"))) {
-            System.out.println("=======================================");
+            System.out.println("==========================");
             System.out.println("""
                     Invalid input. Specify time range again or enter "exit" to leave:
                         \t1. A pair of start date and end date (inclusive).
@@ -183,39 +191,71 @@ class Data {
             selection = sc.nextLine();
             covidAnalyse.exitCheck(selection);
         }
-        if (selection.equals("1")) {
+
+        // Condition to execute methods
+        if (selection.equals("1")) { // method if user choose to enter a pair of start date and end date
             pairOfDates(sc);
         } else if (selection.equals("2")) {
+            // If user choose this time range format, they have to choose to enter number of
+            // days or weeks
+            System.out.println("==========================");
             System.out.println("""
-                    Choose days for weeks from a date:
+                    Choose days or weeks from a date:
                         \t1. Days from a date.
                         \t2. Weeks from a date.""");
             System.out.print(">>> ");
             selection = sc.nextLine();
             covidAnalyse.exitCheck(selection);
-
+            // Selection validate
             while (!(selection.equals("1")) && !(selection.equals("2"))) {
-                System.out.println("=======================================");
+                System.out.println("==========================");
                 System.out.println("""
-                        Invalid input. Choose days for weeks or "exit" to leave:
+                        Invalid input. Choose days or weeks or "exit" to leave:
                         \t1. Days from a date.
                         \t2. Weeks from a date.""");
                 System.out.print(">>> ");
                 selection = sc.nextLine();
                 covidAnalyse.exitCheck(selection);
             }
-
+            // Execute these 2 methods base on user's input
             if (selection.equals("1")) {
                 daysFromDate(sc);
             } else {
                 weeksFromDate(sc);
             }
         } else {
-
+            // If user choose this time range format, they have to choose to enter number of
+            // days or weeks
+            System.out.println("==========================");
+            System.out.println("""
+                    Choose days or weeks to a date:
+                        \t1. Days to a date.
+                        \t2. Weeks to a date.""");
+            System.out.print(">>> ");
+            selection = sc.nextLine();
+            covidAnalyse.exitCheck(selection);
+            // Selection validates
+            while (!(selection.equals("1")) && !(selection.equals("2"))) {
+                System.out.println("==========================");
+                System.out.println("""
+                        Invalid input. Choose days or weeks or "exit" to leave:
+                        \t1. Days to a date.
+                        \t2. Weeks to a date.""");
+                System.out.print(">>> ");
+                selection = sc.nextLine();
+                covidAnalyse.exitCheck(selection);
+            }
+            // Execute these 2 methods base on user's input
+            if (selection.equals("1")) {
+                daysToDate(sc);
+            } else {
+                weeksToDate(sc);
+            }
         }
     }
 
     boolean checkNumberInput(String input) {
+        /* This method to check if user's input can be parse to integer. */
         try {
             Integer.parseInt(input);
             return true;
@@ -226,10 +266,16 @@ class Data {
     }
 
     String durationInput(Scanner sc, String duration) {
+        /*
+         * This method to let user enter duration and check if the duration can be parse
+         * to integer.
+         */
         duration = sc.nextLine();
         covidAnalyse.exitCheck(duration);
         while (!checkNumberInput(duration)) {
+            System.out.println("==========================");
             System.out.println("Input must be an integer: ");
+            System.out.print(">>> ");
             duration = sc.nextLine();
             covidAnalyse.exitCheck(duration);
         }
@@ -237,20 +283,32 @@ class Data {
     }
 
     void daysFromDate(Scanner sc) {
-        String dateStr = "";
-        String days = "";
-        System.out.println("Enter base date: ");
+        /*
+         * This method is to let user choose a time range base on a date and a number of
+         * days to be plus to it.
+         */
+        String dateStr = ""; // to store the date
+        String days = ""; // to store number of days
+        // get user date input and validate. If it's fine, store it to object's start
+        // date
+        System.out.println("==========================");
+        System.out.println("Enter base date following the format \"YYYY/MM/DD\": ");
         System.out.print(">>> ");
         dateStr = checkDateInput(sc, dateStr);
         startDate = LocalDate.parse(dateStr, df);
 
+        System.out.println("==========================");
         System.out.println("Enter the number of days from base date: ");
         System.out.print(">>> ");
 
+        // get user number of days input and validate. If it's fine, plus the
+        // original start date and store it to object's end
+        // date
         days = durationInput(sc, days);
         endDate = startDate.plusDays(Integer.parseInt(days));
-
+        // Input validate
         while (!checkInTimeRange(endDate.format(df))) {
+            System.out.println("==========================");
             System.out.println("""
                     Time range you chose out of possible range. Please choose days again.
                     \sPossible time range: """);
@@ -260,14 +318,57 @@ class Data {
         }
     }
 
+    void daysToDate(Scanner sc) {
+        /*
+         * This method is to let user choose a time range base on a date and a number of
+         * days to be minus.
+         */
+        String dateStr = ""; // store date
+        String days = ""; // store number of days to minus
+
+        // get user date input and validate. If it's fine, store it to object's end
+        // date
+        System.out.println("==========================");
+        System.out.println("Enter base date: ");
+        System.out.print(">>> ");
+        dateStr = checkDateInput(sc, dateStr);
+        endDate = LocalDate.parse(dateStr, df);
+
+        System.out.println("==========================");
+        System.out.println("Enter the number of days to base date: ");
+        System.out.print(">>> ");
+        // get user number of days input and validate. If it's fine, minus the
+        // original end date and store it to object's start
+        // date
+        days = durationInput(sc, days);
+        startDate = endDate.minusDays(Integer.parseInt(days));
+        // Input validates
+        while (!checkInTimeRange(startDate.format(df))) {
+            System.out.println("==========================");
+            System.out.println("""
+                    Time range you chose out of possible range. Please choose days again.
+                    \sPossible time range: """);
+            System.out.println("\t" + date.get(0) + " -- " + date.get(date.size() - 1));
+            days = durationInput(sc, days);
+            startDate = endDate.minusDays(Integer.parseInt(days));
+        }
+    }
+
     void weeksFromDate(Scanner sc) {
+
+        /*
+         * This method is dealt with the same as days methods. just need to convert
+         * weeks -> days
+         */
         String dateStr = "";
         String weeks = "";
-        System.out.println("Enter base date: ");
+        System.out.println("==========================");
+        System.out.println("Enter base date following the format \"YYYY/MM/DD\": ");
         System.out.print(">>> ");
         dateStr = checkDateInput(sc, dateStr);
         startDate = LocalDate.parse(dateStr, df);
 
+        System.out.println("==========================");
         System.out.println("Enter the number of weeks from base date: ");
         System.out.print(">>> ");
 
@@ -275,6 +376,7 @@ class Data {
         endDate = startDate.plusDays(Long.parseLong(weeks) * 7);
 
         while (!checkInTimeRange(endDate.format(df))) {
+            System.out.println("==========================");
             System.out.println("""
                     Time range you chose out of possible range. Please choose weeks again.
                     \sPossible time range: """);
@@ -284,7 +386,39 @@ class Data {
         }
     }
 
+    void weeksToDate(Scanner sc) {
+        /*
+         * This method is dealt with the same as days methods. just need to convert
+         * weeks -> days
+         */
+        String dateStr = "";
+        String weeks = "";
+        System.out.println("==========================");
+        System.out.println("Enter base date following the format \"YYYY/MM/DD\": ");
+        System.out.print(">>> ");
+        dateStr = checkDateInput(sc, dateStr);
+        endDate = LocalDate.parse(dateStr, df);
+
+        System.out.println("==========================");
+        System.out.println("Enter the number of weeks to base date: ");
+        System.out.print(">>> ");
+
+        weeks = durationInput(sc, weeks);
+        startDate = endDate.minusDays(Long.parseLong(weeks) * 7);
+
+        while (!checkInTimeRange(startDate.format(df))) {
+            System.out.println("==========================");
+            System.out.println("""
+                    Time range you chose out of possible range. Please choose weeks again.
+                    \sPossible time range: """);
+            System.out.println("\t" + date.get(0) + " -- " + date.get(date.size() - 1));
+            weeks = durationInput(sc, weeks);
+            startDate = endDate.minusDays(Long.parseLong(weeks) * 7);
+        }
+    }
+
     boolean isDateFormat(String date) {
+        /* This method is used to check if the input date is correctly format or not */
         try {
             LocalDate.parse(date, df);
             return true;
@@ -323,9 +457,18 @@ class Data {
     }
 
     boolean checkNotLeapYearInput(String dateStr) {
+
+        /*
+         * In a non leap year, even if users enter February 29th, the library will
+         * automatically convert it to February 28th. The checkDateFormat method can not
+         * check this either. So this method will do that mission.
+         */
         String[] tokens = dateStr.split("/");
+        // If it's not a leap year
         if (!isLeapYear(Integer.parseInt(tokens[0]))) {
+            // and the month is February
             if (Integer.parseInt(tokens[1]) == 2) {
+                // If user's input is day 29th
                 if (Integer.parseInt(tokens[2]) > 28) {
                     return false;
                 }
@@ -335,6 +478,8 @@ class Data {
     }
 
     boolean checkInTimeRange(String dateStr) {
+        // Check if the dates users enter and the dates calculated is in the database
+        // time range or not
         if (LocalDate.parse(dateStr, df).isBefore(date.get(0))
                 || LocalDate.parse(dateStr, df).isAfter(date.get(date.size() - 1))) {
             return false;
@@ -343,29 +488,39 @@ class Data {
     }
 
     String checkDateInput(Scanner sc, String dateStr) {
+        // deal with possible exceptions with user's date input. If input error occurs,
+        // error message is displayed and the method is called recursively until users
+        // enter a correct date input.
         dateStr = sc.nextLine();
         covidAnalyse.exitCheck(dateStr);
         if (!isDateFormat(dateStr)) {
+            System.out.println("==========================");
             System.out.println("Your input is not following the format, please try again: ");
             System.out.print(">>> ");
-            checkDateInput(sc, dateStr);
+            dateStr = checkDateInput(sc, dateStr);
         }
 
         if (!checkNotLeapYearInput(dateStr)) {
+            System.out.println("==========================");
             System.out.println("This is not leap year, February days cannot exceed 28.\nPlease enter date again");
             System.out.print(">>> ");
-            checkDateInput(sc, dateStr);
+            dateStr = checkDateInput(sc, dateStr);
         }
         if (!checkInTimeRange(dateStr)) {
+            System.out.println("==========================");
             System.out.println("Your input exceed possible time range. Please enter again:");
             System.out.print(">>> ");
-            checkDateInput(sc, dateStr);
+            dateStr = checkDateInput(sc, dateStr);
         }
         return dateStr;
     }
 
     void pairOfDates(Scanner sc) {
+        // Let users enter a pair of date and validate. if correct, store to startDate
+        // and endDate
+
         String dateStr = "";
+        System.out.println("==========================");
         System.out.print("""
                 Enter start date and end start base on the format "YYYY/MM/DD"
                 \sNOTE: You can only choose start date and end date between """);
@@ -375,10 +530,17 @@ class Data {
         dateStr = checkDateInput(sc, dateStr);
         startDate = LocalDate.parse(dateStr, df);
 
+        System.out.println("==========================");
         System.out.println("Enter end date: ");
         System.out.print(">>> ");
         dateStr = checkDateInput(sc, dateStr);
         endDate = LocalDate.parse(dateStr, df);
+
+        if (endDate.isBefore(startDate)) {
+            System.out.println("==========================");
+            System.out.println("Your end date is before start date. Please check and enter again.");
+            pairOfDates(sc);
+        }
 
     }
 
