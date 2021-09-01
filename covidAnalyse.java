@@ -206,7 +206,7 @@ class Data {
             }
 
             if (selection.equals("1")) {
-                daysFromDate();
+                daysFromDate(sc);
             } else {
                 weeksFromDate();
             }
@@ -225,8 +225,39 @@ class Data {
         }
     }
 
-    void daysFromDate() {
+    String daysDurationInput(Scanner sc, String days) {
+        days = sc.nextLine();
+        covidAnalyse.exitCheck(days);
+        while (!checkNumberInput(days)) {
+            System.out.println("Input must be an integer: ");
+            days = sc.nextLine();
+            covidAnalyse.exitCheck(days);
+        }
+        return days;
+    }
 
+    void daysFromDate(Scanner sc) {
+        String dateStr = "";
+        String days = "";
+        System.out.println("Enter base date: ");
+        System.out.print(">>> ");
+        dateStr = checkDateInput(sc, dateStr);
+        startDate = LocalDate.parse(dateStr, df);
+
+        System.out.println("Enter the number of days from base date: ");
+        System.out.print(">>> ");
+
+        days = daysDurationInput(sc, days);
+        endDate = startDate.plusDays(Integer.parseInt(days));
+
+        while (!checkInTimeRange(endDate.format(df))) {
+            System.out.println("""
+                    Time range you chose out of possible range. Please choose days again.
+                    \sPossible time range: """);
+            System.out.println("\t" + date.get(0) + " -- " + date.get(date.size() - 1));
+            days = daysDurationInput(sc, days);
+            endDate = startDate.plusDays(Integer.parseInt(days));
+        }
     }
 
     void weeksFromDate() {
