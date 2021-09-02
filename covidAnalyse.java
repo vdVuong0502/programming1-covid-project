@@ -724,6 +724,8 @@ class Summary {
     int groupsNum; // Store number of groups
     int daysPerGroup; // Store number of days per group
 
+    static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/M/d");
+
     static boolean checkNumberInput(String input) {
         /* This method to check if user's input can be parse to integer. */
         try {
@@ -832,8 +834,29 @@ class Summary {
 
     }
 
-    void GroupNumMethod() {
+    static void GroupNumMethod(Data dt, Summary sum) {
+        LocalDate groupStart;
+        LocalDate groupEnd;
 
+        if (dt.range.size() % sum.groupsNum == 0) {
+            groupStart = dt.range.get(0);
+            groupEnd = dt.range.get((dt.range.size() / sum.groupsNum) - 1);
+            for (int i = 0; i < sum.groupsNum; i++) {
+                sum.groups.add(groupStart.format(df) + "," + groupEnd.format(df));
+                groupStart = groupEnd.plusDays(1);
+                groupEnd = groupStart.plusDays((dt.range.size() / sum.groupsNum) - 1);
+            }
+        } else {
+            groupStart = dt.range.get(0);
+            groupEnd = dt.range.get((dt.range.size() / sum.groupsNum) - 1);
+            for (int i = 0; i < sum.groupsNum; i++) {
+                if (i < dt.range.size() % sum.groupsNum){
+                    
+                }
+                sum.groups.add(groupStart.format(df) + "," + groupEnd.format(df));
+                groupStart = groupEnd.plusDays(1);
+                groupEnd = groupStart.plusDays((dt.range.size() / sum.groupsNum) - 1);
+        }
     }
 
 }
