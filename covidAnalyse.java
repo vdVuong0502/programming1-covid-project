@@ -71,12 +71,12 @@ public class covidAnalyse {
         text = text.toLowerCase();
         return text;
     }
-
 }
 
 class Data {
     String name;
     ArrayList<LocalDate> date = new ArrayList<LocalDate>();
+    ArrayList<LocalDate> range = new ArrayList<LocalDate>();
     ArrayList<Integer> newCase = new ArrayList<Integer>();
     ArrayList<Integer> newDeath = new ArrayList<Integer>();
     ArrayList<Integer> peopleVacinated = new ArrayList<Integer>();
@@ -257,6 +257,14 @@ class Data {
                 daysToDate(sc);
             } else {
                 weeksToDate(sc);
+            }
+        }
+
+        // add all the dates in time range into range list
+        for (int i = 0; i < date.size(); i++) {
+            if ((date.get(i).isEqual(startDate) || date.get(i).isAfter(startDate))
+                    && (date.get(i).isEqual(endDate) || date.get(i).isBefore(endDate))) {
+                range.add(date.get(i));
             }
         }
     }
@@ -703,8 +711,129 @@ class Data {
 }
 
 class Summary {
+    // These list is to store data calculated base on user chosen metric and result
+    // type
+    ArrayList<Integer> newCases = new ArrayList<Integer>();
+    ArrayList<Integer> newDeaths = new ArrayList<Integer>();
+    ArrayList<Integer> newVaccinated = new ArrayList<Integer>();
+    ArrayList<Integer> upToCases = new ArrayList<Integer>();
+    ArrayList<Integer> upToDeaths = new ArrayList<Integer>();
+    ArrayList<Integer> upToVaccinated = new ArrayList<Integer>();
+    // this groups list is to store a string of each groups
+    ArrayList<String> groups = new ArrayList<String>();
+    int groupsNum; // Store number of groups
+    int daysPerGroup; // Store number of days per group
 
-    public Summary SummaryCalculator(Data dt) {
+    static boolean checkNumberInput(String input) {
+        /* This method to check if user's input can be parse to integer. */
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (Exception e) {
+            // TODO: handle exception
+            return false;
+        }
+    }
+
+    static boolean inputValidate(String selection, int numberOfSelection) {
+        // This method is to validate the selection is valid or not
+        for (int i = 0; i < numberOfSelection; i++) {
+            if (selection.equals(String.valueOf(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static String groupingMethod(String selection, Scanner sc) {
+        // This method help get user's method input and validate it. Call the method
+        // recursively everytime error detected
+        selection = sc.nextLine();
+        covidAnalyse.exitCheck(selection);
+
+        if (!checkNumberInput(selection)) {
+            System.out.println("==========================");
+            System.out.println("""
+                    Your input is not a number. Please try again:
+                            \t1. No grouping: each day is a separate group.
+                            \t2. Number of groups you want to divide.
+                            \t3. Number of days you want each group to have.""");
+            System.out.print(">>> ");
+            selection = groupingMethod(selection, sc);
+        }
+        if (!inputValidate(selection, 3)) {
+            System.out.println("==========================");
+            System.out.println("""
+                    Your input is invalid. Please try again:
+                            \t1. No grouping: each day is a separate group.
+                            \t2. Number of groups you want to divide.
+                            \t3. Number of days you want each group to have.""");
+            System.out.print(">>> ");
+            selection = groupingMethod(selection, sc);
+        }
+
+        return selection;
+    }
+
+    public static Summary SummaryCalculator(Data dt, Scanner sc, Summary sum) {
+
+        /* Get data object and start to summary data base on user's selected method */
+        String selection = "";
+        // Let user choose the grouping method
+        System.out.println("==========================");
+        System.out.println("""
+                Please specify grouping types:
+                        \t1. No grouping: each day is a separate group.
+                        \t2. Number of groups you want to divide.
+                        \t3. Number of days you want each group to have.""");
+        System.out.print(">>> ");
+        selection = groupingMethod(selection, sc);
+
+        if (selection.equals("2")) {
+            System.out.println("==========================");
+            System.out.println("Enter a number of groups: ");
+            System.out.print(">>>");
+            sum.groupsNum = Integer.parseInt(groupInput(sc, dt));
+        } else if (selection.equals("3")) {
+
+        } else {
+
+        }
 
     }
+
+    static String groupInput(Scanner sc, Data dt) {
+        String groupsNum;
+        groupsNum = sc.nextLine();
+        covidAnalyse.exitCheck(groupsNum);
+
+        if (!checkNumberInput(groupsNum)) {
+            System.out.println("==========================");
+            System.out.println("Your input is not a number. Please try again:");
+            System.out.print(">>> ");
+            groupsNum = groupInput(sc, dt);
+        }
+
+        if (Integer.parseInt(groupsNum) < 1) {
+            System.out.println("==========================");
+            System.out.println("Number of groups cannot be less than 1. Please try again:");
+            System.out.print(">>> ");
+            groupsNum = groupInput(sc, dt);
+        }
+
+        if (Integer.parseInt(groupsNum) > dt.range.size()) {
+            System.out.println("==========================");
+            System.out.println("Number of groups cannot exceed the days in time range. Please try again:");
+            System.out.print(">>> ");
+            groupsNum = groupInput(sc, dt);
+        }
+
+        return groupsNum;
+
+    }
+
+    void GroupNumMethod() {
+
+    }
+
 }
