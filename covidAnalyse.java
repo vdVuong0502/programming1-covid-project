@@ -259,24 +259,6 @@ class Data {
                 weeksToDate(sc);
             }
         }
-
-        if (!startDate.isEqual(date.get(0))) {
-            while (!date.get(0).isEqual(startDate.minusDays(1))) {
-                date.remove(0);
-                newCase.remove(0);
-                newDeath.remove(0);
-                peopleVacinated.remove(0);
-            }
-        }
-
-        if (!endDate.isEqual(date.get(date.size() - 1))) {
-            while (!date.get(date.size() - 1).isEqual(endDate.plusDays(1))) {
-                date.remove(date.size() - 1);
-                newCase.remove(date.size() - 1);
-                newDeath.remove(date.size() - 1);
-                peopleVacinated.remove(date.size() - 1);
-            }
-        }
     }
 
     boolean checkNumberInput(String input) {
@@ -716,6 +698,13 @@ class Data {
             }
         }
         countryRd.close();
+
+    }
+}
+
+class Summary {
+
+    public Summary SummaryCalculator(Data dt) {
 
     }
 }
