@@ -18,11 +18,9 @@ public class Main {
             prsData.sortByDate();
             prsData.timeFilter(sc);
             sumData = Summary.SummaryCalculator(prsData, sc, sumData);
-            // test output
-            System.out.println(sumData.groups);
-            System.out.println(prsData.range);
-            System.out.println(prsData.newCase);
-            System.out.println(prsData.newDeath);
+
+            // output testing area
+
             // main program
             // leave this alone....
             while (true) {

@@ -38,7 +38,6 @@ public class Summary {
     }
 
     static String groupingMethod(String selection, Scanner sc) {
-        String selected = selection;
         // This method help get user's method input and validate it. Call the method
         // recursively everytime error detected
         System.out.println("==========================");
@@ -48,22 +47,22 @@ public class Summary {
                         \t2. Number of groups you want to divide.
                         \t3. Number of days you want each group to have.""");
         System.out.print(">>> ");
-        selected = sc.nextLine();
-        Main.exitCheck(selected);
+        selection = sc.nextLine();
+        Main.exitCheck(selection);
 
-        if (!checkNumberInput(selected)) {
+        if (!checkNumberInput(selection)) {
             System.out.println("==========================");
             System.out.println("Your input is not a number. Please try again:");
 
-            selected = groupingMethod(selected, sc);
+            selection = groupingMethod(selection, sc);
         }
         if (!inputValidate(selection, 3)) {
             System.out.println("==========================");
             System.out.println("Your input is invalid. Please try again:");
-            selected = groupingMethod(selected, sc);
+            selection = groupingMethod(selection, sc);
         }
 
-        return selected;
+        return selection;
     }
 
     public static Summary SummaryCalculator(Data dt, Scanner sc, Summary sum) {
