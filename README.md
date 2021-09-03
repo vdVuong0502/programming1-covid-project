@@ -24,3 +24,4 @@ people vaccinated data sẽ được handle khi chỉnh data theo time range.
 - end date
 
 data trong các list đã được sort theo date. Mình dùng LocalDate cho các biển date và DateTimeFormatter để format
+Class summary xong. 2 list, 1 list gom cac group, 1 list gom result. 1 bien chua resultType, 1 bien chua metric
