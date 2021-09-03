@@ -4,76 +4,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.time.format.*;
 
-public class covidAnalyse {
-    public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        String answer;
-        Data prsData = new Data();
-
-        System.out.println("Welcome to covid data processing and analytics tool.");
-        System.out.println("==========================");
-        System.out.println("You can type \"exit\" anytime you want to end the program.");
-        System.out.println("==========================");
-        while (true) {
-            // main program
-            prsData = Data.selectDataByArea(sc, prsData);
-
-            prsData.sortByDate();
-            prsData.timeFilter(sc);
-
-            // test output
-            System.out.println(prsData.startDate);
-            System.out.println(prsData.endDate);
-            System.out.println(prsData.date);
-            System.out.println(prsData.newCase);
-            System.out.println(prsData.newDeath);
-            System.out.println(prsData.peopleVacinated);
-
-            // main program
-            // leave this alone....
-            while (true) {
-                System.out.println("==========================");
-                System.out.println("Do you want to continue(y/n)? ");
-                System.out.print(">>> ");
-                answer = sc.nextLine();
-                if (answer.equals("y") || answer.equals("n")) {
-                    break;
-                }
-                System.out.print("Invalid input.");
-
-            }
-            if (answer.equals("y")) {
-                continue;
-            } else {
-                System.out.print("Goodbye");
-                break;
-            }
-        }
-
-    }
-
-    static void exitCheck(String selection) {// This method check whether user want to quit or not.
-        selection = textHandle(selection);
-        if (selection.equals("exit")) {
-            System.out.println("==========================");
-            System.out.println("Thank you for using. The program is exiting.");
-            System.out.println("==========================");
-            System.exit(0);
-        }
-    }
-
-    static String textHandle(String text) {
-        /*
-         * This method is used incase the user input Scanner read \n character.
-         * Basically, it's is used for easier comparison statements.
-         */
-        text = text.replace("\n", "").replace("\r", "");
-        text = text.toLowerCase();
-        return text;
-    }
-}
-
-class Data {
+public class Data {
     String name;
     ArrayList<LocalDate> date = new ArrayList<LocalDate>();
     ArrayList<LocalDate> range = new ArrayList<LocalDate>();
@@ -86,6 +17,7 @@ class Data {
 
     public static Data selectDataByArea(Scanner userInput, Data processedData) throws IOException {
         // Select area
+        processedData = new Data();
         String selection;
         System.out.println("""
                 Please specify a geographic area whose data you want to view:
@@ -93,7 +25,7 @@ class Data {
                 \t2. By country""");
         System.out.print(">>> ");
         selection = userInput.nextLine();
-        covidAnalyse.exitCheck(selection);
+        Main.exitCheck(selection);
 
         while (!(selection.equals("1")) && !(selection.equals("2"))) {
             System.out.println("==========================");
@@ -103,22 +35,22 @@ class Data {
                     \t2. By country""");
             System.out.print(">>> ");
             selection = userInput.nextLine();
-            covidAnalyse.exitCheck(selection);
+            Main.exitCheck(selection);
         }
 
         // Specify by continent
         if (selection.equals("1")) {
             System.out.println("Enter a continent: ");
             System.out.print(">>> ");
-            String continent = covidAnalyse.textHandle(userInput.nextLine());
-            covidAnalyse.exitCheck(continent);
+            String continent = Main.textHandle(userInput.nextLine());
+            Main.exitCheck(continent);
 
             while (!findContinent(continent)) {
                 System.out.println("==========================");
                 System.out.println("Continent not found. Please enter continent again or enter \"exit\" to leave: ");
                 System.out.print(">>> ");
-                continent = covidAnalyse.textHandle(userInput.nextLine());
-                covidAnalyse.exitCheck(continent);
+                continent = Main.textHandle(userInput.nextLine());
+                Main.exitCheck(continent);
             }
             System.out.println("Loading...");
             readByContinent(continent, processedData);
@@ -126,15 +58,15 @@ class Data {
         } else {
             System.out.println("Enter a country: ");
             System.out.print(">>> ");
-            String country = covidAnalyse.textHandle(userInput.nextLine());
-            covidAnalyse.exitCheck(country);
+            String country = Main.textHandle(userInput.nextLine());
+            Main.exitCheck(country);
 
             while (!findCountry(country)) {
                 System.out.println("==========================");
                 System.out.println("Country not found. Please enter country again or enter \"exit\" to leave: ");
                 System.out.print(">>> ");
-                country = covidAnalyse.textHandle(userInput.nextLine());
-                covidAnalyse.exitCheck(country);
+                country = Main.textHandle(userInput.nextLine());
+                Main.exitCheck(country);
             }
             System.out.println("Loading...");
             readByCountry(country, processedData);
@@ -185,7 +117,7 @@ class Data {
                     \t3. A number of days or weeks to a particular date.""");
         System.out.print(">>> ");
         String selection = sc.nextLine();
-        covidAnalyse.exitCheck(selection);
+        Main.exitCheck(selection);
         // selection validate
         while (!(selection.equals("1")) && !(selection.equals("2")) && !(selection.equals("3"))) {
             System.out.println("==========================");
@@ -196,7 +128,7 @@ class Data {
                         \t3. A number of days or weeks to a particular date.""");
             System.out.print(">>> ");
             selection = sc.nextLine();
-            covidAnalyse.exitCheck(selection);
+            Main.exitCheck(selection);
         }
 
         // Condition to execute methods
@@ -212,7 +144,7 @@ class Data {
                         \t2. Weeks from a date.""");
             System.out.print(">>> ");
             selection = sc.nextLine();
-            covidAnalyse.exitCheck(selection);
+            Main.exitCheck(selection);
             // Selection validate
             while (!(selection.equals("1")) && !(selection.equals("2"))) {
                 System.out.println("==========================");
@@ -222,7 +154,7 @@ class Data {
                         \t2. Weeks from a date.""");
                 System.out.print(">>> ");
                 selection = sc.nextLine();
-                covidAnalyse.exitCheck(selection);
+                Main.exitCheck(selection);
             }
             // Execute these 2 methods base on user's input
             if (selection.equals("1")) {
@@ -240,7 +172,7 @@ class Data {
                         \t2. Weeks to a date.""");
             System.out.print(">>> ");
             selection = sc.nextLine();
-            covidAnalyse.exitCheck(selection);
+            Main.exitCheck(selection);
             // Selection validates
             while (!(selection.equals("1")) && !(selection.equals("2"))) {
                 System.out.println("==========================");
@@ -250,7 +182,7 @@ class Data {
                         \t2. Weeks to a date.""");
                 System.out.print(">>> ");
                 selection = sc.nextLine();
-                covidAnalyse.exitCheck(selection);
+                Main.exitCheck(selection);
             }
             // Execute these 2 methods base on user's input
             if (selection.equals("1")) {
@@ -261,6 +193,7 @@ class Data {
         }
 
         // add all the dates in time range into range list
+
         for (int i = 0; i < date.size(); i++) {
             if ((date.get(i).isEqual(startDate) || date.get(i).isAfter(startDate))
                     && (date.get(i).isEqual(endDate) || date.get(i).isBefore(endDate))) {
@@ -286,13 +219,13 @@ class Data {
          * to integer.
          */
         duration = sc.nextLine();
-        covidAnalyse.exitCheck(duration);
+        Main.exitCheck(duration);
         while (!checkNumberInput(duration)) {
             System.out.println("==========================");
             System.out.println("Input must be an integer: ");
             System.out.print(">>> ");
             duration = sc.nextLine();
-            covidAnalyse.exitCheck(duration);
+            Main.exitCheck(duration);
         }
         return duration;
     }
@@ -507,7 +440,7 @@ class Data {
         // error message is displayed and the method is called recursively until users
         // enter a correct date input.
         dateStr = sc.nextLine();
-        covidAnalyse.exitCheck(dateStr);
+        Main.exitCheck(dateStr);
         if (!isDateFormat(dateStr)) {
             System.out.println("==========================");
             System.out.println("Your input is not following the format, please try again: ");
@@ -571,7 +504,7 @@ class Data {
 
         while (((line = contRd.readLine()) != null) && !found) {
             tokens = line.split(",");
-            if (covidAnalyse.textHandle(tokens[1]).equals(continent)) {
+            if (Main.textHandle(tokens[1]).equals(continent)) {
                 found = true;
                 break;
             }
@@ -592,7 +525,7 @@ class Data {
 
         while (((line = countryRd.readLine()) != null) && !found) {
             tokens = line.split(",");
-            if (covidAnalyse.textHandle(tokens[2]).equals(country)) {
+            if (Main.textHandle(tokens[2]).equals(country)) {
                 found = true;
                 break;
             }
@@ -636,7 +569,7 @@ class Data {
              * listed in order, however, the index of the date and the index of its other
              * columns will be the same, so it should be fine.
              */
-            if (covidAnalyse.textHandle(tokens[1]).equals(continent)) {
+            if (Main.textHandle(tokens[1]).equals(continent)) {
                 if (!dt.date.isEmpty()) {
                     // existed dates will be added. only works if the arraylist is not empty
                     for (int i = 0; i < dt.date.size(); i++) {
@@ -695,7 +628,7 @@ class Data {
              * The date is not listed in order, however, the index of the date and the index
              * of its other columns will be the same, so it should be fine.
              */
-            if (covidAnalyse.textHandle(tokens[2]).equals(country)) {
+            if (Main.textHandle(tokens[2]).equals(country)) {
                 // New dates will be appended
                 dt.date.add(LocalDate.parse(tokens[3], df));
                 dt.newCase.add(Integer.parseInt(tokens[4]));
@@ -708,155 +641,4 @@ class Data {
         countryRd.close();
 
     }
-}
-
-class Summary {
-    // These list is to store data calculated base on user chosen metric and result
-    // type
-    ArrayList<Integer> newCases = new ArrayList<Integer>();
-    ArrayList<Integer> newDeaths = new ArrayList<Integer>();
-    ArrayList<Integer> newVaccinated = new ArrayList<Integer>();
-    ArrayList<Integer> upToCases = new ArrayList<Integer>();
-    ArrayList<Integer> upToDeaths = new ArrayList<Integer>();
-    ArrayList<Integer> upToVaccinated = new ArrayList<Integer>();
-    // this groups list is to store a string of each groups
-    ArrayList<String> groups = new ArrayList<String>();
-    int groupsNum; // Store number of groups
-    int daysPerGroup; // Store number of days per group
-
-    static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/M/d");
-
-    static boolean checkNumberInput(String input) {
-        /* This method to check if user's input can be parse to integer. */
-        try {
-            Integer.parseInt(input);
-            return true;
-        } catch (Exception e) {
-            // TODO: handle exception
-            return false;
-        }
-    }
-
-    static boolean inputValidate(String selection, int numberOfSelection) {
-        // This method is to validate the selection is valid or not
-        for (int i = 0; i < numberOfSelection; i++) {
-            if (selection.equals(String.valueOf(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static String groupingMethod(String selection, Scanner sc) {
-        // This method help get user's method input and validate it. Call the method
-        // recursively everytime error detected
-        selection = sc.nextLine();
-        covidAnalyse.exitCheck(selection);
-
-        if (!checkNumberInput(selection)) {
-            System.out.println("==========================");
-            System.out.println("""
-                    Your input is not a number. Please try again:
-                            \t1. No grouping: each day is a separate group.
-                            \t2. Number of groups you want to divide.
-                            \t3. Number of days you want each group to have.""");
-            System.out.print(">>> ");
-            selection = groupingMethod(selection, sc);
-        }
-        if (!inputValidate(selection, 3)) {
-            System.out.println("==========================");
-            System.out.println("""
-                    Your input is invalid. Please try again:
-                            \t1. No grouping: each day is a separate group.
-                            \t2. Number of groups you want to divide.
-                            \t3. Number of days you want each group to have.""");
-            System.out.print(">>> ");
-            selection = groupingMethod(selection, sc);
-        }
-
-        return selection;
-    }
-
-    public static Summary SummaryCalculator(Data dt, Scanner sc, Summary sum) {
-
-        /* Get data object and start to summary data base on user's selected method */
-        String selection = "";
-        // Let user choose the grouping method
-        System.out.println("==========================");
-        System.out.println("""
-                Please specify grouping types:
-                        \t1. No grouping: each day is a separate group.
-                        \t2. Number of groups you want to divide.
-                        \t3. Number of days you want each group to have.""");
-        System.out.print(">>> ");
-        selection = groupingMethod(selection, sc);
-
-        if (selection.equals("2")) {
-            System.out.println("==========================");
-            System.out.println("Enter a number of groups: ");
-            System.out.print(">>>");
-            sum.groupsNum = Integer.parseInt(groupInput(sc, dt));
-        } else if (selection.equals("3")) {
-
-        } else {
-
-        }
-
-    }
-
-    static String groupInput(Scanner sc, Data dt) {
-        String groupsNum;
-        groupsNum = sc.nextLine();
-        covidAnalyse.exitCheck(groupsNum);
-
-        if (!checkNumberInput(groupsNum)) {
-            System.out.println("==========================");
-            System.out.println("Your input is not a number. Please try again:");
-            System.out.print(">>> ");
-            groupsNum = groupInput(sc, dt);
-        }
-
-        if (Integer.parseInt(groupsNum) < 1) {
-            System.out.println("==========================");
-            System.out.println("Number of groups cannot be less than 1. Please try again:");
-            System.out.print(">>> ");
-            groupsNum = groupInput(sc, dt);
-        }
-
-        if (Integer.parseInt(groupsNum) > dt.range.size()) {
-            System.out.println("==========================");
-            System.out.println("Number of groups cannot exceed the days in time range. Please try again:");
-            System.out.print(">>> ");
-            groupsNum = groupInput(sc, dt);
-        }
-
-        return groupsNum;
-
-    }
-
-    static void GroupNumMethod(Data dt, Summary sum) {
-        LocalDate groupStart;
-        LocalDate groupEnd;
-
-        if (dt.range.size() % sum.groupsNum == 0) {
-            groupStart = dt.range.get(0);
-            groupEnd = dt.range.get((dt.range.size() / sum.groupsNum) - 1);
-            for (int i = 0; i < sum.groupsNum; i++) {
-                sum.groups.add(groupStart.format(df) + "," + groupEnd.format(df));
-                groupStart = groupEnd.plusDays(1);
-                groupEnd = groupStart.plusDays((dt.range.size() / sum.groupsNum) - 1);
-            }
-        } else {
-            groupStart = dt.range.get(0);
-            groupEnd = dt.range.get((dt.range.size() / sum.groupsNum) - 1);
-            for (int i = 0; i < sum.groupsNum; i++) {
-                if (i < dt.range.size() % sum.groupsNum){
-                    
-                }
-                sum.groups.add(groupStart.format(df) + "," + groupEnd.format(df));
-                groupStart = groupEnd.plusDays(1);
-                groupEnd = groupStart.plusDays((dt.range.size() / sum.groupsNum) - 1);
-        }
-    }
-
 }
