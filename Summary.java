@@ -79,13 +79,63 @@ public class Summary {
             sum.groupsNum = Integer.parseInt(groupInput(sc, dt));
             GroupNumMethod(dt, sum, sc);
         } else if (selection.equals("3")) {
+            System.out.println("==========================");
+            System.out.println("Enter a number of days you want for each group: ");
+            System.out.print(">>>");
+            sum.daysPerGroup = Integer.parseInt(daysInput(sc, dt));
 
+            // since the input is validated to be divided. So assign the group number and
+            // apply groupNumMethod like above
+            sum.groupsNum = dt.range.size() / sum.daysPerGroup;
+            GroupNumMethod(dt, sum, sc);
         } else {
-
+            noGroup(dt, sum, sc);
         }
 
         return sum;
 
+    }
+
+    static String daysInput(Scanner sc, Data dt) {
+
+        // get days input and validate
+        String days;
+        days = sc.nextLine();
+        Main.exitCheck(days);
+
+        if (!checkNumberInput(days)) {
+            System.out.println("==========================");
+            System.out.println("Your input is not a number. Please try again:");
+            System.out.print(">>> ");
+            days = daysInput(sc, dt);
+        }
+        // if equals 1, it will be the same as no grouping method
+        if (Integer.parseInt(days) <= 1) {
+            System.out.println("==========================");
+            System.out.println("Number of days cannot be less than or equal 1. Please try again:");
+            System.out.print(">>> ");
+            days = daysInput(sc, dt);
+        }
+
+        if (Integer.parseInt(days) > dt.range.size()) {
+            System.out.println("==========================");
+            System.out.println("Number of days cannot exceed the days in time range. Please try again:");
+            System.out.print(">>> ");
+            days = daysInput(sc, dt);
+        }
+
+        // return error message if groups cannot be divided equally
+        if (dt.range.size() % Integer.parseInt(days) != 0) {
+            System.out.println("==========================");
+            System.out.print("""
+                    The groups cannot be divide equally.
+                    Number of days in your chosen time range is: """);
+            System.out.println(dt.range.size());
+            System.out.println("Please try again or enter \"exit\" to leave: ");
+            System.out.print(">>> ");
+            days = daysInput(sc, dt);
+        }
+        return days;
     }
 
     static String groupInput(Scanner sc, Data dt) {
@@ -115,6 +165,49 @@ public class Summary {
         }
 
         return groupsNum;
+
+    }
+
+    static void noGroup(Data dt, Summary sum, Scanner sc) {
+        /*
+         * In this method user will choose metric and resultType first, then the method
+         * will calculate the result and add group
+         */
+        metric(sc, sum);
+        resultType(sc, sum);
+        // these if block is to determine what result add method should be used base on
+        // metric and result type
+        for (int k = 0; k < dt.range.size(); k++) {
+            // Add each day in time range to group
+            sum.groups.add(dt.range.get(k).format(df));
+
+            // in any cases of this method, group start and group end date is the same
+            // value. we will use the same date we add to sum.groups for calculate these
+            // result method.
+            if (sum.resultType.equals("new")) {
+                if (sum.metric.equals("cases")) {
+                    newCases(dt.range.get(k), dt.range.get(k), dt, sum);
+
+                } else if (sum.metric.equals("deaths")) {
+                    newDeath(dt.range.get(k), dt.range.get(k), dt, sum);
+
+                } else {
+                    newVac(dt.range.get(k), dt.range.get(k), dt, sum);
+
+                }
+            } else {
+                if (sum.metric.equals("cases")) {
+                    upToCases(dt.range.get(k), dt, sum);
+
+                } else if (sum.metric.equals("deaths")) {
+                    upToDeath(dt.range.get(k), dt, sum);
+
+                } else {
+                    upToVac(dt.range.get(k), dt, sum);
+
+                }
+            }
+        }
 
     }
 
