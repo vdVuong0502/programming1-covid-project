@@ -1,7 +1,6 @@
 import java.util.*;
 import java.io.*;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.time.format.*;
 
 public class Summary {
@@ -13,6 +12,7 @@ public class Summary {
     int groupsNum; // Store number of groups
     int daysPerGroup; // Store number of days per group
     String metric;
+    String resultType;
 
     static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/M/d");
 
@@ -38,40 +38,9 @@ public class Summary {
     }
 
     static String groupingMethod(String selection, Scanner sc) {
+        String selected = selection;
         // This method help get user's method input and validate it. Call the method
         // recursively everytime error detected
-        selection = sc.nextLine();
-        Main.exitCheck(selection);
-
-        if (!checkNumberInput(selection)) {
-            System.out.println("==========================");
-            System.out.println("""
-                    Your input is not a number. Please try again:
-                            \t1. No grouping: each day is a separate group.
-                            \t2. Number of groups you want to divide.
-                            \t3. Number of days you want each group to have.""");
-            System.out.print(">>> ");
-            selection = groupingMethod(selection, sc);
-        }
-        if (!inputValidate(selection, 3)) {
-            System.out.println("==========================");
-            System.out.println("""
-                    Your input is invalid. Please try again:
-                            \t1. No grouping: each day is a separate group.
-                            \t2. Number of groups you want to divide.
-                            \t3. Number of days you want each group to have.""");
-            System.out.print(">>> ");
-            selection = groupingMethod(selection, sc);
-        }
-
-        return selection;
-    }
-
-    public static Summary SummaryCalculator(Data dt, Scanner sc, Summary sum) {
-        sum = new Summary();
-        /* Get data object and start to summary data base on user's selected method */
-        String selection = "";
-        // Let user choose the grouping method
         System.out.println("==========================");
         System.out.println("""
                 Please specify grouping types:
@@ -79,8 +48,30 @@ public class Summary {
                         \t2. Number of groups you want to divide.
                         \t3. Number of days you want each group to have.""");
         System.out.print(">>> ");
-        selection = groupingMethod(selection, sc);
+        selected = sc.nextLine();
+        Main.exitCheck(selected);
 
+        if (!checkNumberInput(selected)) {
+            System.out.println("==========================");
+            System.out.println("Your input is not a number. Please try again:");
+
+            selected = groupingMethod(selected, sc);
+        }
+        if (!inputValidate(selection, 3)) {
+            System.out.println("==========================");
+            System.out.println("Your input is invalid. Please try again:");
+            selected = groupingMethod(selected, sc);
+        }
+
+        return selected;
+    }
+
+    public static Summary SummaryCalculator(Data dt, Scanner sc, Summary sum) {
+        sum = new Summary();
+        /* Get data object and start to summary data base on user's selected method */
+        String selection = "";
+        // Let user choose the grouping method
+        selection = groupingMethod(selection, sc);
         if (selection.equals("2")) {
             System.out.println("==========================");
             System.out.println("Enter a number of groups: ");
@@ -128,6 +119,7 @@ public class Summary {
     }
 
     static void GroupNumMethod(Data dt, Summary sum, Scanner sc) {
+        LocalDate[] groupElement;
         LocalDate groupStart;
         LocalDate groupEnd;
         sum.groups.clear();
@@ -163,6 +155,54 @@ public class Summary {
         // Now we have the groups in a list. We will start calculate data base on what
         // user choose. First is metric, then, result type.
         metric(sc, sum);
+        resultType(sc, sum);
+        // these if block is to determine what result add method should be used base on
+        // metric and result type
+        if (sum.resultType.equals("new")) {
+            if (sum.metric.equals("cases")) {
+                for (int i = 0; i < sum.groups.size(); i++) {
+                    groupElement = groupSplit(sum.groups.get(i));
+                    newCases(groupElement[0], groupElement[1], dt, sum);
+                }
+            } else if (sum.metric.equals("deaths")) {
+                for (int i = 0; i < sum.groups.size(); i++) {
+                    groupElement = groupSplit(sum.groups.get(i));
+                    newDeath(groupElement[0], groupElement[1], dt, sum);
+                }
+            } else {
+                for (int i = 0; i < sum.groups.size(); i++) {
+                    groupElement = groupSplit(sum.groups.get(i));
+                    newVac(groupElement[0], groupElement[1], dt, sum);
+                }
+            }
+        } else {
+            if (sum.metric.equals("cases")) {
+                for (int i = 0; i < sum.groups.size(); i++) {
+                    groupElement = groupSplit(sum.groups.get(i));
+                    upToCases(groupElement[1], dt, sum);
+                }
+            } else if (sum.metric.equals("deaths")) {
+                for (int i = 0; i < sum.groups.size(); i++) {
+                    groupElement = groupSplit(sum.groups.get(i));
+                    upToDeath(groupElement[1], dt, sum);
+                }
+            } else {
+                for (int i = 0; i < sum.groups.size(); i++) {
+                    groupElement = groupSplit(sum.groups.get(i));
+                    upToVac(groupElement[1], dt, sum);
+                }
+            }
+        }
+    }
+
+    static LocalDate[] groupSplit(String group) {
+        LocalDate[] groupElement = new LocalDate[2];
+        String[] tokens = group.split(",");
+
+        groupElement[0] = LocalDate.parse(tokens[0], df);
+        groupElement[1] = LocalDate.parse(tokens[1], df);
+
+        return groupElement;
     }
 
     static void metric(Scanner sc, Summary sum) {
@@ -184,12 +224,73 @@ public class Summary {
             case "2":
                 sum.metric = "deaths";
                 break;
-            case "3":
+            default:
                 sum.metric = "vaccinated";
                 break;
+        }
+    }
+
+    static String metricInputCheck(Scanner sc, String selection) {
+        selection = sc.nextLine();
+        Main.exitCheck(selection);
+
+        if (!checkNumberInput(selection)) {
+            System.out.println("==========================");
+            System.out.println("Your input is invalid. Please try again:");
+            System.out.print(">>> ");
+            selection = metricInputCheck(sc, selection);
+        }
+
+        if (!inputValidate(selection, 3)) {
+            System.out.println("==========================");
+            System.out.println("Your input is invalid. Please try again:");
+            System.out.print(">>> ");
+            selection = metricInputCheck(sc, selection);
+        }
+
+        return selection;
+    }
+
+    static void resultType(Scanner sc, Summary sum) {
+        String selection = "";
+
+        System.out.println("==========================");
+        System.out.println("""
+                Please specify a result Type:
+                        \t1. New total.
+                        \t2. Up to.""");
+        System.out.print(">>> ");
+        selection = resultInputCheck(sc, selection);
+
+        switch (selection) {
+            case "1":
+                sum.resultType = "new";
+                break;
             default:
+                sum.resultType = "upTo";
                 break;
         }
+    }
+
+    static String resultInputCheck(Scanner sc, String selection) {
+        selection = sc.nextLine();
+        Main.exitCheck(selection);
+
+        if (!checkNumberInput(selection)) {
+            System.out.println("==========================");
+            System.out.println("Your input is invalid. Please try again:");
+            System.out.print(">>> ");
+            selection = metricInputCheck(sc, selection);
+        }
+
+        if (!inputValidate(selection, 2)) {
+            System.out.println("==========================");
+            System.out.println("Your input is invalid. Please try again:");
+            System.out.print(">>> ");
+            selection = metricInputCheck(sc, selection);
+        }
+
+        return selection;
     }
 
     static void newCases(LocalDate groupStart, LocalDate groupEnd, Data dt, Summary sum) {
@@ -294,27 +395,6 @@ public class Summary {
 
         }
         sum.result.add(temp);
-    }
-
-    static String metricInputCheck(Scanner sc, String selection) {
-        selection = sc.nextLine();
-        Main.exitCheck(selection);
-
-        if (!checkNumberInput(selection)) {
-            System.out.println("==========================");
-            System.out.println("Your input is invalid. Please try again:");
-            System.out.print(">>> ");
-            selection = metricInputCheck(sc, selection);
-        }
-
-        if (!inputValidate(selection, 3)) {
-            System.out.println("==========================");
-            System.out.println("Your input is invalid. Please try again:");
-            System.out.print(">>> ");
-            selection = metricInputCheck(sc, selection);
-        }
-
-        return selection;
     }
 
 }
