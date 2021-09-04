@@ -14,7 +14,7 @@ public class Display {
 
     // choose display method
     static Display displayMethod(Scanner sc, Summary sum, Display disp) {
-        disp = new Display();
+        disp = new Display();// assign to a new object to prevent data accumulate each time user continue
         rangeListFormat(sum, disp);
         String selection = "";
         System.out.println("""

@@ -66,7 +66,7 @@ public class Summary {
     }
 
     public static Summary SummaryCalculator(Data dt, Scanner sc, Summary sum) {
-        sum = new Summary();
+        sum = new Summary();// assign to a new object to prevent data accumulate each time user continue
         /* Get data object and start to summary data base on user's selected method */
         String selection = "";
         // Let user choose the grouping method

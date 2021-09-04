@@ -16,7 +16,7 @@ public class Data {
 
     public static Data selectDataByArea(Scanner userInput, Data processedData) throws IOException {
         // Select area
-        processedData = new Data();
+        processedData = new Data(); // assign to a new object to prevent data accumulate each time user continue
         String selection;
         System.out.println("""
                 Please specify a geographic area whose data you want to view:
