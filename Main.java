@@ -7,6 +7,7 @@ public class Main {
         String answer;
         Data prsData = new Data();
         Summary sumData = new Summary();
+        Display disp = new Display();
         System.out.println("Welcome to covid data processing and analytics tool.");
         System.out.println("==========================");
         System.out.println("You can type \"exit\" anytime you want to end the program.");
@@ -18,6 +19,7 @@ public class Main {
             prsData.sortByDate();
             prsData.timeFilter(sc);
             sumData = Summary.SummaryCalculator(prsData, sc, sumData);
+            disp = Display.displayMethod(sc, sumData, disp);
 
             // output testing area
 

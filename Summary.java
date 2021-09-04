@@ -29,7 +29,7 @@ public class Summary {
 
     static boolean inputValidate(String selection, int numberOfSelection) {
         // This method is to validate the selection is valid or not
-        for (int i = 0; i < numberOfSelection; i++) {
+        for (int i = 1; i <= numberOfSelection; i++) {
             if (selection.equals(String.valueOf(i))) {
                 return true;
             }
