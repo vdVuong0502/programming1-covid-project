@@ -359,7 +359,7 @@ public class Summary {
                 sum.resultType = "new";
                 break;
             default:
-                sum.resultType = "upTo";
+                sum.resultType = "up to";
                 break;
         }
     }
